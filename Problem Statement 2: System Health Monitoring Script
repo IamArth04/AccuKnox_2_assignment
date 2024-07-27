@@ -1,0 +1,41 @@
+Objective 1: System Health Monitoring Script
+
+import os
+import psutil
+import logging
+
+# Set logging configuration
+logging.basicConfig(filename='system_health.log', level=logging.INFO)
+
+def get_cpu_usage():
+    return psutil.cpu_percent(interval=1)
+
+def get_memory_usage():
+    return psutil.virtual_memory().percent
+
+def get_disk_usage():
+    return psutil.disk_usage('/').percent
+
+def get_running_processes():
+    return len(psutil.pids())
+
+def monitor_system_health():
+    logging.info('System health monitoring started')
+    while True:
+        cpu_usage = get_cpu_usage()
+        memory_usage = get_memory_usage()
+        disk_usage = get_disk_usage()
+        running_processes = get_running_processes()
+        
+        if cpu_usage > 80 or memory_usage > 80 or disk_usage > 80:
+            logging.warning('System health threshold exceeded')
+        
+        logging.info(f'CPU usage: {cpu_usage}%')
+        logging.info(f'Memory usage: {memory_usage}%')
+        logging.info(f'Disk usage: {disk_usage}%')
+        logging.info(f'Running processes: {running_processes}')
+        
+        time.sleep(60)  # Monitor every 1 minute
+
+if __name__ == '__main__':
+    monitor_system_health()
