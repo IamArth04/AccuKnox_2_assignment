@@ -1,0 +1,49 @@
+Objective 3: Log File Analyzer
+
+import re
+import collections
+
+# Set log file path
+LOG_FILE = 'access.log'
+
+def parse_log_file():
+    with open(LOG_FILE, 'r') as f:
+        log_data = f.readlines()
+    
+    # Initialize counters
+    error_counts = collections.defaultdict(int)
+    request_counts = collections.defaultdict(int)
+    ip_address_counts = collections.defaultdict(int)
+    
+    for line in log_data:
+        # Count errors
+        if '404' in line:
+            error_counts['404'] += 1
+        
+        # Count requests by method
+        method = re.search(r'GET|POST|PUT|DELETE', line)
+        if method:
+            request_counts[method.group()] += 1
+        
+        # Count requests by IP address
+        ip_address = re.search(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b', line)
+        if ip_address:
+            ip_address_counts[ip_address.group()] += 1
+    
+    return error_counts, request_counts, ip_address_counts
+
+def print_report(error_counts, request_counts, ip_address_counts):
+    print('Log File Analysis Report:')
+    print('Errors:')
+    for error, count in error_counts.items():
+        print(f'  {error}: {count}')
+    print('Request Counts:')
+    for method, count in request_counts.items():
+        print(f'  {method}: {count}')
+    print('IP Address Counts:')
+    for ip_address, count in ip_address_counts.items():
+        print(f'  {ip_address}: {count}')
+
+if __name__ == '__main__':
+    error_counts, request_counts, ip_address_counts = parse_log_file()
+    print_report(error_counts, request_counts, ip_address_counts)
